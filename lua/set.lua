@@ -16,6 +16,8 @@ local home = os.getenv("USERPROFILE") or os.getenv("HOME")
 vim.opt.undodir = home .. "/.nvim/undodir"
 vim.opt.undofile = true
 
+vim.opt.mouse = ""
+
 vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
