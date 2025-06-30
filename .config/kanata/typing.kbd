@@ -1,0 +1,47 @@
+(defcfg
+	process-unmapped-keys yes
+)
+
+(defsrc
+	     q w e r t y u i o p
+	caps a s d f g h j k l ;
+			 z x c v b n m , . /
+			 alt ralt
+			 kprt
+)
+
+(defalias
+	f( tap-hold 300 130 f lctrl)
+	d( tap-hold 300 130 d lshift)
+	a( tap-hold 300 300 a lmet)
+	k( tap-hold 300 130 k rshift)
+	;( tap-hold 300 300 ; rmet)
+	caps(tap-hold 200 200 esc (caps-word 2000))
+	l2(layer-while-held second)
+	l3(layer-while-held third)
+)
+
+(deflayer base
+				_ _ _ _ _ _ _ _ _ _
+	@caps @a _ @d @f _ _ _ @k _ @;
+				_ _ _ _ _ _ _ _ _ _
+				@l3 @l2
+				kprt
+)
+
+(deflayer (second)
+				[   ]     S-[ S-] _   _ +   -   _   _
+	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 =
+				S-` S-\	  `   S-8 _   _ _   _   _   \
+				_ _
+				kprt
+)
+
+(deflayer (third)
+			1 2 3 4 5 6 7 8 9 0
+@caps S-6 S-2 S-4 S-5 _ left down up right _
+			_ 🔇 🔉 🔊 _ _ _ _ _ _
+			_ _
+			kprt
+)
+
