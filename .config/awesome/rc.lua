@@ -62,11 +62,12 @@ editor_cmd = terminal .. " -e " .. editor
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
+local altkey = "Mod1"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-  awful.layout.suit.floating,
   awful.layout.suit.tile,
+  awful.layout.suit.floating,
 }
 -- }}}
 
@@ -189,7 +190,7 @@ awful.screen.connect_for_each_screen(function(s)
   }
 
   -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", screen = s })
+  s.mywibox = awful.wibar({ position = "top", height = 20, screen = s })
 
   -- Add widgets to the wibox
   s.mywibox:setup {
@@ -224,59 +225,57 @@ root.buttons(gears.table.join(
 globalkeys = gears.table.join(
   awful.key({ modkey, }, "s", hotkeys_popup.show_help,
     { description = "show help", group = "awesome" }),
-  awful.key({ modkey, }, "Left", awful.tag.viewprev,
-    { description = "view previous", group = "tag" }),
-  awful.key({ modkey, }, "Right", awful.tag.viewnext,
-    { description = "view next", group = "tag" }),
   awful.key({ modkey, }, "Escape", awful.tag.history.restore,
     { description = "go back", group = "tag" }),
+  awful.key({ modkey, }, "w", function() mymainmenu:show() end,
+    { description = "show main menu", group = "awesome" }),
 
-  awful.key({ modkey, }, "j",
-    function()
+  -- Focusing between windows (super + hjkl)
+  awful.key({ modkey, }, "j", function()
       awful.client.focus.global_bydirection("down")
     end,
     { description = "focus down", group = "client" }
   ),
-  awful.key({ modkey, }, "k",
-    function()
+  awful.key({ modkey, }, "k", function()
       awful.client.focus.global_bydirection("up")
     end,
     { description = "focus up", group = "client" }
   ),
-  awful.key({ modkey, }, "h",
-    function()
+  awful.key({ modkey, }, "h", function()
       awful.client.focus.global_bydirection("left")
     end,
     { description = "focus left", group = "client" }
   ),
-  awful.key({ modkey, }, "l",
-    function()
+  awful.key({ modkey, }, "l", function()
       awful.client.focus.global_bydirection("right")
     end,
     { description = "focus right", group = "client" }
   ),
-  awful.key({ modkey, }, "w", function() mymainmenu:show() end,
-    { description = "show main menu", group = "awesome" }),
 
-  -- Layout manipulation
-  awful.key({ modkey, "Shift" }, "j", function() awful.client.swap.byidx(1) end,
-    { description = "swap with next client by index", group = "client" }),
-  awful.key({ modkey, "Shift" }, "k", function() awful.client.swap.byidx(-1) end,
-    { description = "swap with previous client by index", group = "client" }),
-  awful.key({ modkey, "Control" }, "j", function() awful.screen.focus_relative(1) end,
-    { description = "focus the next screen", group = "screen" }),
-  awful.key({ modkey, "Control" }, "k", function() awful.screen.focus_relative(-1) end,
-    { description = "focus the previous screen", group = "screen" }),
+  -- Layout manipulation (super + arrows)
+  awful.key({ modkey, }, "Down", function()
+      awful.client.swap.global_bydirection("down")
+    end,
+    { description = "swap with client on the bottom", group = "client" }),
+  awful.key({ modkey, }, "Up", function()
+      awful.client.swap.global_bydirection("up")
+    end,
+    { description = "swap with client on the top", group = "client" }),
+  awful.key({ modkey, }, "Left", function()
+      awful.client.swap.global_bydirection("left")
+    end,
+    { description = "swap with client on the left", group = "client" }),
+  awful.key({ modkey, }, "Right", function()
+      awful.client.swap.global_bydirection("right")
+    end,
+    { description = "swap with client on the right", group = "client" }),
+
+  --  awful.key({ modkey, "Control" }, "j", function() awful.screen.focus_relative(1) end,
+  --    { description = "focus the next screen", group = "screen" }),
+  --  awful.key({ modkey, "Control" }, "k", function() awful.screen.focus_relative(-1) end,
+  --    { description = "focus the previous screen", group = "screen" }),
   awful.key({ modkey, }, "u", awful.client.urgent.jumpto,
     { description = "jump to urgent client", group = "client" }),
-  awful.key({ "Mod1", }, "Tab",
-    function()
-      awful.client.focus.history.previous()
-      if client.focus then
-        client.focus:raise()
-      end
-    end,
-    { description = "go back", group = "client" }),
 
   -- Standard program
   awful.key({ modkey, }, "Return", function() awful.spawn(terminal) end,
@@ -285,9 +284,9 @@ globalkeys = gears.table.join(
     { description = "reload awesome", group = "awesome" }),
   awful.key({ modkey, "Shift" }, "q", awesome.quit,
     { description = "quit awesome", group = "awesome" }),
-  awful.key({ modkey, "Mod1" }, "l", function() awful.tag.incmwfact(0.05) end,
+  awful.key({ modkey, altkey }, "l", function() awful.tag.incmwfact(0.05) end,
     { description = "increase master width factor", group = "layout" }),
-  awful.key({ modkey, "Mod1" }, "h", function() awful.tag.incmwfact(-0.05) end,
+  awful.key({ modkey, altkey }, "h", function() awful.tag.incmwfact(-0.05) end,
     { description = "decrease master width factor", group = "layout" }),
   awful.key({ modkey, "Control" }, "h", function() awful.tag.incnmaster(1, nil, true) end,
     { description = "increase the number of master clients", group = "layout" }),
@@ -301,6 +300,100 @@ globalkeys = gears.table.join(
     { description = "select next", group = "layout" }),
   awful.key({ modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
     { description = "select previous", group = "layout" }),
+
+  -- Volume controls
+  awful.key({}, "XF86AudioRaiseVolume", function()
+    local increment = 20
+
+    awful.spawn.easy_async_with_shell(
+      [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
+      function(stdout)
+        local volume = tonumber(stdout)
+
+        if not volume then return end
+
+        local new_volume = volume + increment
+
+        if new_volume > 100 then
+          awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ 100%")
+          return
+        end
+
+        awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. new_volume .. "%")
+        awful.spawn("notify-send 'Volume: " .. new_volume .. "%'")
+      end)
+  end, { description = "volume up", group = "media" }),
+
+  awful.key({}, "XF86AudioLowerVolume", function()
+    local increment = -20
+
+    awful.spawn.easy_async_with_shell(
+      [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
+      function(stdout)
+        local volume = tonumber(stdout)
+
+        if not volume then return end
+
+        local new_volume = volume + increment
+
+        if new_volume > 100 then
+          awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ 100%")
+          return
+        end
+
+        awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. new_volume .. "%")
+        awful.spawn("notify-send 'Volume: " .. new_volume .. "%'")
+      end)
+  end, { description = "volume down", group = "media" }),
+
+  -- Find tuning volume
+  awful.key({ "Shift" }, "XF86AudioRaiseVolume", function()
+    local increment = 4
+
+    awful.spawn.easy_async_with_shell(
+      [[pactl get-sink-volume @default_sink@ | grep -op '\d+(?=%)' | head -1]],
+      function(stdout)
+        local volume = tonumber(stdout)
+
+        if not volume then return end
+
+        local new_volume = volume + increment
+
+        if new_volume > 100 then
+          awful.spawn("pactl set-sink-volume @default_sink@ 100%")
+          return
+        end
+
+        awful.spawn("pactl set-sink-volume @default_sink@ " .. new_volume .. "%")
+        awful.spawn("notify-send 'volume: " .. new_volume .. "%'")
+      end)
+  end, { description = "volume up", group = "media" }),
+
+  awful.key({ "Shift" }, "XF86AudioLowerVolume", function()
+    local increment = -4
+
+    awful.spawn.easy_async_with_shell(
+      [[pactl get-sink-volume @default_sink@ | grep -op '\d+(?=%)' | head -1]],
+      function(stdout)
+        local volume = tonumber(stdout)
+
+        if not volume then return end
+
+        local new_volume = volume + increment
+
+        if new_volume > 100 then
+          awful.spawn("pactl set-sink-volume @default_sink@ 100%")
+          return
+        end
+
+        awful.spawn("pactl set-sink-volume @default_sink@ " .. new_volume .. "%")
+        awful.spawn("notify-send 'volume: " .. new_volume .. "%'")
+      end)
+  end, { description = "volume down", group = "media" }),
+
+  awful.key({}, "XF86AudioMute", function()
+    awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+  end, { description = "toggle mute", group = "media" }),
 
   awful.key({ modkey, "Control" }, "n",
     function()
@@ -328,6 +421,7 @@ globalkeys = gears.table.join(
       }
     end,
     { description = "lua execute prompt", group = "awesome" }),
+
   -- Menubar
   awful.key({ modkey }, "p", function() menubar.show() end,
     { description = "show the menubar", group = "launcher" })
