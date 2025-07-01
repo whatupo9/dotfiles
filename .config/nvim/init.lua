@@ -13,7 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("set")
 require("remap")
-require("user_commands")
+require("user-commands")
 require("lazy").setup("plugins")
 
 transBg()
