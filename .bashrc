@@ -17,5 +17,7 @@ alias restart='sudo systemctl stop typing.service && sudo systemctl start kanata
 # Add alias for dotfiles bare repo
 alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+alias todo='nvim ~/todo.txt'
+
 
 PS1='[\u@\h \W]\$ '
