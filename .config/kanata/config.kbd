@@ -20,9 +20,16 @@
 	k( tap-hold 300 160 k rshift)
 	l( tap-hold 300 170 l ralt)
 	;( tap-hold 300 200 ; rmet)
+	tf( tap-hold 300 130 f lctrl)
+	td( tap-hold 300 130 d lshift)
+	tk( tap-hold 300 130 k rshift)
+	t;( tap-hold 300 300 ; lmet)
 	caps(tap-hold 200 200 esc (caps-word 2000))
+  esc(tap-hold 200 200 esc caps)
 	l2(layer-while-held second)
 	l3(layer-while-held third)
+  t(layer-switch typing)
+  n(layer-switch base)
 )
 
 (deflayer base
@@ -34,11 +41,20 @@
 				kprt
 )
 
+(deflayer (typing)
+      @esc
+      _ _ _ _ _ _ _ _ _ _
+@caps _ _ @td @tf _ _ _ @tk _ @t;
+      _ _ _ _ _ _ _ _ _ _
+      @l3 @l2
+      kprt
+)
+
 (deflayer (second)
 				caps
-				[   ]     S-[ S-] _   _ +   -   _   _
+				[   ]     S-[ S-] @t  _ +   -   _   _
 	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 =
-				S-` S-\	  `   S-8 _   _ _   _   _   \
+				S-` S-\	  `   S-8 _   @n _   _   _   \
 				_ _
 				kprt
 )
