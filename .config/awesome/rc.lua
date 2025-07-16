@@ -282,6 +282,16 @@ globalkeys = gears.table.join(
     { description = "open a terminal", group = "launcher" }),
   awful.key({ modkey, "Control" }, "r", awesome.restart,
     { description = "reload awesome", group = "awesome" }),
+  awful.key({ modkey, }, "Tab",
+    function()
+      if client.focus then
+        client.focus:raise()
+      else
+        local c = awful.client.restore()
+        if c then c:raise() end
+      end
+    end,
+    { description = "reload awesome", group = "awesome" }),
   awful.key({ modkey, "Shift" }, "q", awesome.quit,
     { description = "quit awesome", group = "awesome" }),
   awful.key({ modkey, altkey }, "l", function() awful.tag.incmwfact(0.05) end,
@@ -303,7 +313,7 @@ globalkeys = gears.table.join(
 
   -- Volume controls
   awful.key({}, "XF86AudioRaiseVolume", function()
-    local increment = 20
+    local increment = 10
 
     awful.spawn.easy_async_with_shell(
       [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
@@ -325,7 +335,7 @@ globalkeys = gears.table.join(
   end, { description = "volume up", group = "media" }),
 
   awful.key({}, "XF86AudioLowerVolume", function()
-    local increment = -20
+    local increment = -10
 
     awful.spawn.easy_async_with_shell(
       [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
@@ -597,6 +607,16 @@ awful.rules.rules = {
     },
     properties = { titlebars_enabled = true }
   },
+  {
+    rule = { class = "Opera" },
+    properties = { tag = "2" }
+  },
+  {
+    rule = { class = "discord" },
+    properties = { tag = "3" }
+  },
+
+
 
   -- Set Firefox to always map on the tag named "2" on screen 1.
   -- { rule = { class = "Firefox" },
@@ -616,6 +636,8 @@ client.connect_signal("manage", function(c)
       and not c.size_hints.program_position then
     -- Prevent clients from being unreachable after screen count changes.
     awful.placement.no_offscreen(c)
+  else
+    awful.client.setslave(c)
   end
 end)
 
