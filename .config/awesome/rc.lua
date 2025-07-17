@@ -282,16 +282,6 @@ globalkeys = gears.table.join(
     { description = "open a terminal", group = "launcher" }),
   awful.key({ modkey, "Control" }, "r", awesome.restart,
     { description = "reload awesome", group = "awesome" }),
-  awful.key({ modkey, }, "Tab",
-    function()
-      if client.focus then
-        client.focus:raise()
-      else
-        local c = awful.client.restore()
-        if c then c:raise() end
-      end
-    end,
-    { description = "reload awesome", group = "awesome" }),
   awful.key({ modkey, "Shift" }, "q", awesome.quit,
     { description = "quit awesome", group = "awesome" }),
   awful.key({ modkey, altkey }, "l", function() awful.tag.incmwfact(0.05) end,
