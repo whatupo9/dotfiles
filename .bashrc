@@ -18,11 +18,16 @@ alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias restart='sudo systemctl restart kanata'
 
 # Open my todo list
-alias todo='nvim ~/todo.txt'
+alias todolist='nvim ~/todo.txt'
 
-# Switch to my cube project
+# Switch to my projects
 alias cube='cd /mnt/shared/projects/new_cube_sim'
 alias cubed='cd /mnt/shared/projects/new_cube_sim/bin/debug'
+alias opengl='cd /mnt/shared/projects/learnopengl'
+alias opengld='cd /mnt/shared/projects/learnopengl/bin/debug'
+
+# Count the lines of code in a project
+alias loc='find src include -type f -exec cat {} + | wc -l'
 
 # Command to make project outside of nvim 
 alias makep='cmake -G Ninja -S . -B build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug && cmake --build build --config Debug'
@@ -31,5 +36,8 @@ PS1='[\u@\h \W]\$ '
 
 # Add scripts to path
 export PATH="$HOME/scripts:$PATH"
+
+# Add todo to path
+export PATH="/mnt/shared/projects/todo/bin/debug:$PATH"
 
 export TERMINAL=alacritty
