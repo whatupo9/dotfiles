@@ -29,6 +29,7 @@ vim.keymap.set("n", "Q", "<nop>")
 --starts a find and replace for the word under the cursor
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
+-- Comment all selected lines
 vim.keymap.set("v", "<leader>m", function()
     -- Capture visual selection range BEFORE the prompt
   local start_line = vim.fn.line("v")

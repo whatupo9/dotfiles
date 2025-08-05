@@ -8,7 +8,8 @@ return {
       local function live_grep_in_dirs()
         builtin.live_grep({
           search_dirs = {
-            os.getenv("HOME") or os.getenv("USERPROFILE")
+            os.getenv("HOME"),
+            "/mnt/shared"
           },
         })
       end
