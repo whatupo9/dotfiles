@@ -221,6 +221,21 @@ root.buttons(gears.table.join(
 ))
 -- }}}
 
+local last_slave_for_tag = {}
+
+client.connect_signal("focus", function(c)
+  local t = c.first_tag
+  if not t then return end
+
+  local layout = t.layout
+  if layout == awful.layout.suit.tile then
+    local master = awful.client.getmaster()
+    if master and c ~= master then
+      last_slave_for_tag[t] = c
+    end
+  end
+end)
+
 -- {{{ Key bindings
 globalkeys = gears.table.join(
   awful.key({ modkey, }, "s", hotkeys_popup.show_help,
@@ -247,7 +262,22 @@ globalkeys = gears.table.join(
     { description = "focus left", group = "client" }
   ),
   awful.key({ modkey, }, "l", function()
-      awful.client.focus.global_bydirection("right")
+      local t = awful.screen.focused().selected_tag
+      if not t then return end
+
+      local master = awful.client.getmaster()
+      if client.focus == master then
+        -- Jump back to last slave
+        local slave = last_slave_for_tag[t]
+        if slave and slave.valid and slave:isvisible() then
+          client.focus = slave
+          slave:raise()
+        else
+          awful.client.focus.global_bydirection("right")
+        end
+      else
+        awful.client.focus.global_bydirection("right")
+      end
     end,
     { description = "focus right", group = "client" }
   ),
@@ -288,10 +318,6 @@ globalkeys = gears.table.join(
     { description = "increase master width factor", group = "layout" }),
   awful.key({ modkey, altkey }, "h", function() awful.tag.incmwfact(-0.05) end,
     { description = "decrease master width factor", group = "layout" }),
-  awful.key({ modkey, "Control" }, "h", function() awful.tag.incnmaster(1, nil, true) end,
-    { description = "increase the number of master clients", group = "layout" }),
-  awful.key({ modkey, "Control" }, "l", function() awful.tag.incnmaster(-1, nil, true) end,
-    { description = "decrease the number of master clients", group = "layout" }),
   awful.key({ modkey, "Shift" }, "a", function() awful.tag.incncol(1, nil, true) end,
     { description = "increase the number of columns", group = "layout" }),
   awful.key({ modkey, "Shift" }, "r", function() awful.tag.incncol(-1, nil, true) end,
@@ -300,6 +326,8 @@ globalkeys = gears.table.join(
     { description = "select next", group = "layout" }),
   awful.key({ modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
     { description = "select previous", group = "layout" }),
+  awful.key({ modkey, "Shift" }, "s", function() awful.spawn("scrot") end,
+    { description = "take screenshot", group = "layout" }),
 
   -- Volume controls
   awful.key({}, "XF86AudioRaiseVolume", function()
@@ -343,51 +371,6 @@ globalkeys = gears.table.join(
 
         awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. new_volume .. "%")
         awful.spawn("notify-send 'Volume: " .. new_volume .. "%'")
-      end)
-  end, { description = "volume down", group = "media" }),
-
-  -- Find tuning volume
-  awful.key({ "Shift" }, "XF86AudioRaiseVolume", function()
-    local increment = 4
-
-    awful.spawn.easy_async_with_shell(
-      [[pactl get-sink-volume @default_sink@ | grep -op '\d+(?=%)' | head -1]],
-      function(stdout)
-        local volume = tonumber(stdout)
-
-        if not volume then return end
-
-        local new_volume = volume + increment
-
-        if new_volume > 100 then
-          awful.spawn("pactl set-sink-volume @default_sink@ 100%")
-          return
-        end
-
-        awful.spawn("pactl set-sink-volume @default_sink@ " .. new_volume .. "%")
-        awful.spawn("notify-send 'volume: " .. new_volume .. "%'")
-      end)
-  end, { description = "volume up", group = "media" }),
-
-  awful.key({ "Shift" }, "XF86AudioLowerVolume", function()
-    local increment = -4
-
-    awful.spawn.easy_async_with_shell(
-      [[pactl get-sink-volume @default_sink@ | grep -op '\d+(?=%)' | head -1]],
-      function(stdout)
-        local volume = tonumber(stdout)
-
-        if not volume then return end
-
-        local new_volume = volume + increment
-
-        if new_volume > 100 then
-          awful.spawn("pactl set-sink-volume @default_sink@ 100%")
-          return
-        end
-
-        awful.spawn("pactl set-sink-volume @default_sink@ " .. new_volume .. "%")
-        awful.spawn("notify-send 'volume: " .. new_volume .. "%'")
       end)
   end, { description = "volume down", group = "media" }),
 
