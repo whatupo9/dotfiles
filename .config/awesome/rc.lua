@@ -18,6 +18,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+local battery_widget = require("widgets.custom.battery")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -73,7 +75,7 @@ awful.layout.layouts = {
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
-myawesomemenu = {
+local myawesomemenu = {
   { "hotkeys",     function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
   { "manual",      terminal .. " -e man awesome" },
   { "edit config", editor_cmd .. " " .. awesome.conffile },
@@ -81,27 +83,102 @@ myawesomemenu = {
   { "quit",        function() awesome.quit() end },
 }
 
-mymainmenu = awful.menu({
+local mymainmenu = awful.menu({
   items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
     { "open terminal", terminal }
   }
-})
-
-mylauncher = awful.widget.launcher({
-  image = beautiful.awesome_icon,
-  menu = mymainmenu
 })
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
+-- Manage Volume
+local current_volume_notif = nil
+local volume_level = 0
+local volume_muted = false;
+
+local function pad_percent(pct)
+  -- Convert number to string with leading zero if < 10
+  return string.format("%02d", pct)
+end
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+local mytextclock = wibox.widget {
+  format = "%H:%M  %a %d ",
+  widget = wibox.widget.textclock,
+  font = "JetBrains Mono 16",
+  margin = { 8, 8, 4, 4 }
+}
+mytextclock = wibox.container.margin(mytextclock, 8, 8, 4, 4) -- padding
+
+local volume_widget = wibox.widget {
+  widget = wibox.widget.textbox,
+  font = "JetBrains Mono 16"
+}
+
+local function update_volume()
+  awful.spawn.easy_async_with_shell(
+    [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
+    function(stdout)
+      local volume = tonumber(stdout)
+      if volume then
+        -- Check mute state after getting volume
+        awful.spawn.easy_async_with_shell(
+          [[pactl get-sink-mute @DEFAULT_SINK@]],
+          function(mute_stdout)
+            volume_muted = mute_stdout:match("yes") ~= nil
+
+            local text = pad_percent(volume) .. "%"
+
+            if volume_muted then
+              text = "<s>" .. text .. "</s>"
+            end
+            volume_widget.markup = text .. " "
+          end
+        )
+      end
+    end
+  )
+end
+
+-- Update volume for widget text at startup
+update_volume(false)
+
+local function take_screenshot()
+  local screenshotDir = os.getenv("HOME") .. "/Pictures/Screenshots/"
+  awful.spawn.with_shell("mkdir -p " .. screenshotDir)
+
+  local filename = os.date("%Y-%m-%d_%H-%M-%S") .. ".png"
+  local filepath = screenshotDir .. filename
+
+  awful.spawn.easy_async_with_shell("scrot " .. filepath, function(_, _, _, exitcode)
+    if exitcode == 0 then
+      -- Send notification with thumbnail
+      naughty.notify({
+        title = "Screenshot Taken",
+        text = "Saved to " .. filepath,
+        timeout = 2.5,
+      })
+    else
+      naughty.notify({
+        title = "Screenshot Failed",
+        text = "scrot exited with code " .. exitcode,
+        preset = naughty.config.presets.critical,
+      })
+    end
+  end)
+end
+
+-- Subscribe to volume updates
+awful.spawn.with_line_callback("pactl subscribe", {
+  stdout = function(line)
+    if line:match("Event 'change' on sink") then
+      update_volume(true)
+    end
+  end
+})
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -120,28 +197,6 @@ local taglist_buttons = gears.table.join(
   awful.button({}, 4, function(t) awful.tag.viewnext(t.screen) end),
   awful.button({}, 5, function(t) awful.tag.viewprev(t.screen) end)
 )
-
-local tasklist_buttons = gears.table.join(
-  awful.button({}, 1, function(c)
-    if c == client.focus then
-      c.minimized = true
-    else
-      c:emit_signal(
-        "request::activate",
-        "tasklist",
-        { raise = true }
-      )
-    end
-  end),
-  awful.button({}, 3, function()
-    awful.menu.client_list({ theme = { width = 250 } })
-  end),
-  awful.button({}, 4, function()
-    awful.client.focus.byidx(1)
-  end),
-  awful.button({}, 5, function()
-    awful.client.focus.byidx(-1)
-  end))
 
 local function set_wallpaper(s)
   -- Wallpaper
@@ -163,7 +218,7 @@ awful.screen.connect_for_each_screen(function(s)
   set_wallpaper(s)
 
   -- Each screen has its own tag table.
-  awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+  awful.tag({ "1", "2", "3", "4", "5" }, s, awful.layout.layouts[1])
 
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
@@ -175,6 +230,7 @@ awful.screen.connect_for_each_screen(function(s)
     awful.button({}, 3, function() awful.layout.inc(-1) end),
     awful.button({}, 4, function() awful.layout.inc(1) end),
     awful.button({}, 5, function() awful.layout.inc(-1) end)))
+
   -- Create a taglist widget
   s.mytaglist = awful.widget.taglist {
     screen  = s,
@@ -183,30 +239,50 @@ awful.screen.connect_for_each_screen(function(s)
   }
 
   -- Create a tasklist widget
-  s.mytasklist = awful.widget.tasklist {
-    screen  = s,
-    filter  = awful.widget.tasklist.filter.currenttags,
-    buttons = tasklist_buttons
-  }
+  --   s.mytasklist = awful.widget.tasklist {
+  --     screen  = s,
+  --     filter  = awful.widget.tasklist.filter.currenttags,
+  --     buttons = tasklist_buttons
+  --   }
 
   -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", height = 20, screen = s })
+  s.mywibox = awful.wibar({ position = "top", height = 30, screen = s })
 
   -- Add widgets to the wibox
   s.mywibox:setup {
     layout = wibox.layout.align.horizontal,
     { -- Left widgets
       layout = wibox.layout.fixed.horizontal,
-      mylauncher,
       s.mytaglist,
       s.mypromptbox,
     },
     s.mytasklist, -- Middle widget
     {             -- Right widgets
       layout = wibox.layout.fixed.horizontal,
-      mykeyboardlayout,
-      wibox.widget.systray(),
       mytextclock,
+      wibox.widget.systray(),
+      battery_widget
+      {
+        ac = "AC",
+        ac_prefix = " ⚡ ",
+        adapter = "BAT0",
+        battery_prefix = " ",
+        percent_colors = {
+          { 25,  "red" },
+          { 50,  "orange" },
+          { 999, "green" },
+        },
+        listen = true,
+        timeout = 10,
+        widget_text = "${AC_BAT}${color_on}${percent}%${color_off} ",
+        widget_font = "JetBrains Mono 16",
+        tooltip_text = "Battery ${state}${time_est}\nCapacity: ${capacity_percent}%",
+        alert_threshold = 5,
+        alert_timeout = 10,
+        alert_title = "Low battery !",
+        alert_text = "${time_est}",
+      },
+      volume_widget,
       s.mylayoutbox,
     },
   }
@@ -237,7 +313,7 @@ client.connect_signal("focus", function(c)
 end)
 
 -- {{{ Key bindings
-globalkeys = gears.table.join(
+local globalkeys = gears.table.join(
   awful.key({ modkey, }, "s", hotkeys_popup.show_help,
     { description = "show help", group = "awesome" }),
   awful.key({ modkey, }, "Escape", awful.tag.history.restore,
@@ -326,12 +402,22 @@ globalkeys = gears.table.join(
     { description = "select next", group = "layout" }),
   awful.key({ modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
     { description = "select previous", group = "layout" }),
-  awful.key({ modkey, "Shift" }, "s", function() awful.spawn("scrot") end,
+  awful.key({ modkey, "Shift" }, "s",
+    function()
+      take_screenshot()
+    end,
     { description = "take screenshot", group = "layout" }),
+
+  awful.key({}, "XF86MonBrightnessDown", function()
+    awful.util.spawn("brightnessctl set 5%-")
+  end),
+  awful.key({}, "XF86MonBrightnessUp", function()
+    awful.util.spawn("brightnessctl set 5%+")
+  end),
 
   -- Volume controls
   awful.key({}, "XF86AudioRaiseVolume", function()
-    local increment = 10
+    local increment = 5
 
     awful.spawn.easy_async_with_shell(
       [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
@@ -348,12 +434,11 @@ globalkeys = gears.table.join(
         end
 
         awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. new_volume .. "%")
-        awful.spawn("notify-send 'Volume: " .. new_volume .. "%'")
       end)
   end, { description = "volume up", group = "media" }),
 
   awful.key({}, "XF86AudioLowerVolume", function()
-    local increment = -10
+    local increment = -5
 
     awful.spawn.easy_async_with_shell(
       [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
@@ -364,13 +449,12 @@ globalkeys = gears.table.join(
 
         local new_volume = volume + increment
 
-        if new_volume > 100 then
-          awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ 100%")
+        if new_volume < 0 then
+          awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ 0%")
           return
         end
 
         awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. new_volume .. "%")
-        awful.spawn("notify-send 'Volume: " .. new_volume .. "%'")
       end)
   end, { description = "volume down", group = "media" }),
 
@@ -410,7 +494,7 @@ globalkeys = gears.table.join(
     { description = "show the menubar", group = "launcher" })
 )
 
-clientkeys = gears.table.join(
+local clientkeys = gears.table.join(
   awful.key({ modkey, }, "f",
     function(c)
       c.fullscreen = not c.fullscreen
@@ -504,7 +588,7 @@ for i = 1, 9 do
   )
 end
 
-clientbuttons = gears.table.join(
+local clientbuttons = gears.table.join(
   awful.button({}, 1, function(c)
     c:emit_signal("request::activate", "mouse_click", { raise = true })
   end),
@@ -580,20 +664,16 @@ awful.rules.rules = {
     },
     properties = { titlebars_enabled = true }
   },
+  -- Force Opera to open in the second tag
   {
     rule = { class = "Opera" },
     properties = { tag = "2" }
   },
+  -- Force Discord to open in the third tag
   {
     rule = { class = "discord" },
     properties = { tag = "3" }
   },
-
-
-
-  -- Set Firefox to always map on the tag named "2" on screen 1.
-  -- { rule = { class = "Firefox" },
-  --   properties = { screen = 1, tag = "2" } },
 }
 -- }}}
 

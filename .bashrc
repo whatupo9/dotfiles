@@ -26,6 +26,8 @@ alias cubed='cd /mnt/shared/projects/new_cube_sim/bin/debug'
 alias opengl='cd /mnt/shared/projects/learnopengl'
 alias opengld='cd /mnt/shared/projects/learnopengl/bin/debug'
 
+alias aidanSaidIt='~/projects/aidanCounter/aidan'
+
 # Count the lines of code in a project
 alias loc='find src include -type f -exec cat {} + | wc -l'
 

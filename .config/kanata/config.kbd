@@ -1,5 +1,6 @@
 (defcfg
 	process-unmapped-keys yes
+  concurrent-tap-hold yes
 )
 
 (defsrc
@@ -31,11 +32,25 @@
   t(layer-switch typing)
   n(layer-switch base)
 )
+(defchordsv2
+  (a s d f j k l ;) (layer-switch noHRM) 50 all-released ()
+  (z x c v m , . /) (layer-switch base) 50 all-released ()
+)
+
 
 (deflayer base
 				caps
 				_ _ _ _ _ _ _ _ _ _
 	@caps @a @s @d @f _ _ @j @k @l @;
+				_ _ _ _ _ _ _ _ _ _
+				@l3 @l2
+				kprt
+)
+
+(deflayer noHRM
+				caps
+				_ _ _ _ _ _ _ _ _ _
+	@caps _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
 				@l3 @l2
 				kprt
