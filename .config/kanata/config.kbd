@@ -33,13 +33,13 @@
   n(layer-switch base)
 )
 (defchordsv2
-  (a s d f j k l ;) (layer-switch noHRM) 50 all-released ()
-  (z x c v m , . /) (layer-switch base) 50 all-released ()
+  (a s d f j k l ;) (layer-switch noHRM) 1000 all-released ()
+  (z x c v m , . /) (layer-switch base) 1000 all-released ()
 )
 
 
 (deflayer base
-				caps
+				@esc
 				_ _ _ _ _ _ _ _ _ _
 	@caps @a @s @d @f _ _ @j @k @l @;
 				_ _ _ _ _ _ _ _ _ _
@@ -48,7 +48,7 @@
 )
 
 (deflayer noHRM
-				caps
+				@esc
 				_ _ _ _ _ _ _ _ _ _
 	@caps _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
@@ -78,7 +78,7 @@
 			caps
 			1 2 3 4 5 6 7 8 9 0
 @caps S-6 S-2 S-4 S-5 _ left down up right _
-			_ 🔇 🔉 🔊 _ _ _ _ _ _
+			_ 🔇 🔉 🔊 brdown brup _ _ _ _
 			_ _
 			kprt
 )

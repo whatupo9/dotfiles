@@ -40,3 +40,6 @@ vim.opt.foldmethod = "manual"
 vim.opt.foldcolumn = "1"
 
 vim.g.mapleader = " "
+
+vim.opt.linebreak = true
+vim.opt.exrc = true

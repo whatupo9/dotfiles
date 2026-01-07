@@ -1,4 +1,6 @@
 [Added Associations]
+application/pdf=opera-2.desktop;
+application/vnd.oasis.opendocument.text=libreoffice.desktop;
 application/x-extension-htm=firefox.desktop;
 application/x-extension-html=firefox.desktop;
 application/x-extension-shtml=firefox.desktop;
@@ -14,6 +16,8 @@ x-scheme-handler/http=firefox.desktop;
 x-scheme-handler/https=firefox.desktop;
 
 [Default Applications]
+application/pdf=opera-2.desktop;
+application/vnd.oasis.opendocument.text=libreoffice.desktop;
 application/x-extension-htm=firefox.desktop
 application/x-extension-html=firefox.desktop
 application/x-extension-shtml=firefox.desktop

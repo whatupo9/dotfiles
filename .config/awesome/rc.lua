@@ -58,6 +58,8 @@ terminal = "alacritty"
 editor = os.getenv("EDITOR") or "nvim"
 editor_cmd = terminal .. " -e " .. editor
 
+naughty.config.defaults['icon_size'] = 100
+
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
@@ -95,13 +97,6 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- Manage Volume
 local current_volume_notif = nil
-local volume_level = 0
-local volume_muted = false;
-
-local function pad_percent(pct)
-  -- Convert number to string with leading zero if < 10
-  return string.format("%02d", pct)
-end
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -118,42 +113,23 @@ local volume_widget = wibox.widget {
   font = "JetBrains Mono 16"
 }
 
-local function update_volume()
-  awful.spawn.easy_async_with_shell(
-    [[pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1]],
-    function(stdout)
-      local volume = tonumber(stdout)
-      if volume then
-        -- Check mute state after getting volume
-        awful.spawn.easy_async_with_shell(
-          [[pactl get-sink-mute @DEFAULT_SINK@]],
-          function(mute_stdout)
-            volume_muted = mute_stdout:match("yes") ~= nil
-
-            local text = pad_percent(volume) .. "%"
-
-            if volume_muted then
-              text = "<s>" .. text .. "</s>"
-            end
-            volume_widget.markup = text .. " "
-          end
-        )
-      end
-    end
-  )
-end
-
 -- Update volume for widget text at startup
-update_volume(false)
+local utils = require("utils")
+utils.update_volume(false, awful, volume_widget)
 
-local function take_screenshot()
+local function take_screenshot(fullscreen)
   local screenshotDir = os.getenv("HOME") .. "/Pictures/Screenshots/"
   awful.spawn.with_shell("mkdir -p " .. screenshotDir)
 
   local filename = os.date("%Y-%m-%d_%H-%M-%S") .. ".png"
   local filepath = screenshotDir .. filename
 
-  awful.spawn.easy_async_with_shell("scrot " .. filepath, function(_, _, _, exitcode)
+  local command = "scrot -e 'xclip -selection clipboard -t image/png -i $f' "
+  if not fullscreen then
+    command = command .. "-s "
+  end
+
+  awful.spawn.easy_async_with_shell(command .. filepath, function(_, _, _, exitcode)
     if exitcode == 0 then
       -- Send notification with thumbnail
       naughty.notify({
@@ -166,6 +142,7 @@ local function take_screenshot()
         title = "Screenshot Failed",
         text = "scrot exited with code " .. exitcode,
         preset = naughty.config.presets.critical,
+        timeout = 5,
       })
     end
   end)
@@ -175,7 +152,7 @@ end
 awful.spawn.with_line_callback("pactl subscribe", {
   stdout = function(line)
     if line:match("Event 'change' on sink") then
-      update_volume(true)
+      utils.update_volume(true, awful, volume_widget)
     end
   end
 })
@@ -193,9 +170,10 @@ local taglist_buttons = gears.table.join(
     if client.focus then
       client.focus:toggle_tag(t)
     end
-  end),
-  awful.button({}, 4, function(t) awful.tag.viewnext(t.screen) end),
-  awful.button({}, 5, function(t) awful.tag.viewprev(t.screen) end)
+  end) --,
+--Mouse wheel scrolls through tags when over wibar
+--awful.button({}, 4, function(t) awful.tag.viewnext(t.screen) end),
+--awful.button({}, 5, function(t) awful.tag.viewprev(t.screen) end)
 )
 
 local function set_wallpaper(s)
@@ -239,11 +217,11 @@ awful.screen.connect_for_each_screen(function(s)
   }
 
   -- Create a tasklist widget
-  --   s.mytasklist = awful.widget.tasklist {
-  --     screen  = s,
-  --     filter  = awful.widget.tasklist.filter.currenttags,
-  --     buttons = tasklist_buttons
-  --   }
+  --  s.mytasklist = awful.widget.tasklist {
+  --    screen  = s,
+  --    filter  = awful.widget.tasklist.filter.currenttags,
+  --    buttons = tasklist_buttons
+  --  }
 
   -- Create the wibox
   s.mywibox = awful.wibar({ position = "top", height = 30, screen = s })
@@ -404,16 +382,28 @@ local globalkeys = gears.table.join(
     { description = "select previous", group = "layout" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
-      take_screenshot()
+      take_screenshot(false)
+    end,
+    { description = "take selective screenshot", group = "layout" }),
+  awful.key({ altkey, }, "s",
+    function()
+      take_screenshot(true)
     end,
     { description = "take screenshot", group = "layout" }),
 
   awful.key({}, "XF86MonBrightnessDown", function()
-    awful.util.spawn("brightnessctl set 5%-")
-  end),
+      awful.util.spawn("brightnessctl set 5%-")
+    end,
+    { description = "brightness down", group = "media" }),
   awful.key({}, "XF86MonBrightnessUp", function()
-    awful.util.spawn("brightnessctl set 5%+")
-  end),
+      awful.util.spawn("brightnessctl set 5%+")
+    end,
+    { description = "brightness up", group = "media" }),
+
+  awful.key({ modkey, "Shift" }, "l", function()
+      awful.util.spawn("slock")
+    end,
+    { description = "lock screen", group = "awesome" }),
 
   -- Volume controls
   awful.key({}, "XF86AudioRaiseVolume", function()
