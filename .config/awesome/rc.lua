@@ -18,6 +18,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+
 local battery_widget = require("widgets.custom.battery")
 
 -- {{{ Error handling
