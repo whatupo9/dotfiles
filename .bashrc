@@ -39,9 +39,8 @@ alias feh='feh -Z'
 
 PS1='[\u@\h \W]\$ '
 
-# Add scripts to path
-export PATH="$HOME/scripts:$PATH"
-export PATH="$HOME/bin:$PATH"
+# Add scrip folder to path
+export PATH="$HOME/.local/bin:$PATH"
 
 # Add todo to path
 export PATH="/mnt/shared/projects/todo/bin/debug:$PATH"
