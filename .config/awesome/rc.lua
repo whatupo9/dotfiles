@@ -18,6 +18,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- Attempt to spawn programs (alacritty, opera, discord)
+-- Only spawns if no process with same name is active
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
 local battery_widget = require("widgets.custom.battery")
@@ -226,7 +228,7 @@ awful.screen.connect_for_each_screen(function(s)
   --  }
 
   -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", height = 30, screen = s })
+  s.mywibox = awful.wibar({ position = "top", height = 40, screen = s })
 
   -- Add widgets to the wibox
   s.mywibox:setup {
@@ -257,7 +259,7 @@ awful.screen.connect_for_each_screen(function(s)
         widget_text = "${AC_BAT}${color_on}${percent}%${color_off} ",
         widget_font = "JetBrains Mono 16",
         tooltip_text = "Battery ${state}${time_est}\nCapacity: ${capacity_percent}%",
-        alert_threshold = 5,
+        alert_threshold = {25, 20, 15, 10, 5, 4, 3, 2, 1},
         alert_timeout = 10,
         alert_title = "Low battery !",
         alert_text = "${time_est}",
