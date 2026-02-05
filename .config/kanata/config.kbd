@@ -5,10 +5,11 @@
 
 (defsrc
 			 esc
+       1 2 3 4 5 6 7 8 9 0 - =
 	     q w e r t y u i o p
 	caps a s d f g h j k l ;
 			 z x c v b n m , . /
-			 alt ralt
+			 alt ralt lmet rmet
 			 kprt
 )
 
@@ -32,53 +33,53 @@
   t(layer-switch typing)
   n(layer-switch base)
 )
-(defchordsv2
-  (a s d f j k l ;) (layer-switch noHRM) 1000 all-released ()
-  (z x c v m , . /) (layer-switch base) 1000 all-released ()
-)
 
-
-(deflayer base
+(deflayer (base)
 				@esc
+        _ _ _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
 	@caps @a @s @d @f _ _ @j @k @l @;
 				_ _ _ _ _ _ _ _ _ _
-				@l3 @l2
+				lmet rmet @l3 @l2
 				kprt
 )
 
-(deflayer noHRM
+(deflayer (noHRM)
 				@esc
+        _ _ _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
 	@caps _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
-				@l3 @l2
+				lmet rmet @l3 @l2
 				kprt
 )
 
 (deflayer (typing)
       @esc
+      _ _ _ _ _ _ _ _ _ _ _ _
       _ _ _ _ _ _ _ _ _ _
 @caps _ _ @td @tf _ _ _ @tk _ @t;
       _ _ _ _ _ _ _ _ _ _
-      @l3 @l2
+      lmet rmet @l3 @l2
       kprt
 )
 
 (deflayer (second)
 				caps
+        f1  f2    f3  f4  f5  f6 f7 f8 f9 f10 f11 f12
 				[   ]     S-[ S-] @t  _ +   -   _   _
 	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 =
 				S-` S-\	  `   S-8 _   @n _   _   _   \
-				_ _
+				lmet rmet _ _
 				kprt
 )
 
 (deflayer (third)
 			caps
+      f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
 			1 2 3 4 5 6 7 8 9 0
 @caps S-6 S-2 S-4 S-5 _ left down up right _
 			_ 🔇 🔉 🔊 brdown brup _ _ _ _
-			_ _
+			lmet rmet _ _
 			kprt
 )
