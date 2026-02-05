@@ -10,7 +10,6 @@
 	caps a s d f g h j k l ;
 			 z x c v b n m , . /
 			 alt ralt lmet rmet
-			 kprt
 )
 
 (defalias
@@ -41,7 +40,6 @@
 	@caps @a @s @d @f _ _ @j @k @l @;
 				_ _ _ _ _ _ _ _ _ _
 				lmet rmet @l3 @l2
-				kprt
 )
 
 (deflayer (noHRM)
@@ -51,7 +49,6 @@
 	@caps _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
 				lmet rmet @l3 @l2
-				kprt
 )
 
 (deflayer (typing)
@@ -61,7 +58,6 @@
 @caps _ _ @td @tf _ _ _ @tk _ @t;
       _ _ _ _ _ _ _ _ _ _
       lmet rmet @l3 @l2
-      kprt
 )
 
 (deflayer (second)
@@ -71,7 +67,6 @@
 	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 =
 				S-` S-\	  `   S-8 _   @n _   _   _   \
 				lmet rmet _ _
-				kprt
 )
 
 (deflayer (third)
@@ -81,5 +76,4 @@
 @caps S-6 S-2 S-4 S-5 _ left down up right _
 			_ 🔇 🔉 🔊 brdown brup _ _ _ _
 			lmet rmet _ _
-			kprt
 )
