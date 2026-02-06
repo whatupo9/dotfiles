@@ -5,7 +5,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-export $EDITOR=nvim
+export EDITOR=nvim
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
