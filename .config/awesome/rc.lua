@@ -242,7 +242,6 @@ awful.screen.connect_for_each_screen(function(s)
     {             -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       mytextclock,
-      wibox.widget.systray(),
       battery_widget
       {
         ac = "AC",
