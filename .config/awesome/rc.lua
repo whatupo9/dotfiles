@@ -18,7 +18,7 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- Attempt to spawn programs (alacritty, opera, discord)
+-- Attempt to spawn programs (alacritty, opera)
 -- Only spawns if no process with same name is active
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
@@ -663,11 +663,6 @@ awful.rules.rules = {
   {
     rule = { class = "Opera" },
     properties = { tag = "2" }
-  },
-  -- Force Discord to open in the third tag
-  {
-    rule = { class = "discord" },
-    properties = { tag = "3" }
   },
 }
 -- }}}
