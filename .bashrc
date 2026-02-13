@@ -10,6 +10,8 @@ export EDITOR=nvim
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 
+alias off='shutdown now'
+
 # Shortcut for refreshing .bashrc
 alias resource='source ~/.bashrc'
 
