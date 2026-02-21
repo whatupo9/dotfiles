@@ -12,6 +12,9 @@ alias grep='grep --color=auto'
 
 alias off='shutdown now'
 
+alias night='redshift -O 1500 && brightnessctl set 1 > /dev/null 2>&1'
+alias day='redshift -x && brightnessctl set 15% > /dev/null 2>&1'
+
 # Shortcut for refreshing .bashrc
 alias resource='source ~/.bashrc'
 
