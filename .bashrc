@@ -15,6 +15,8 @@ alias off='shutdown now'
 alias night='redshift -O 1500 && brightnessctl set 1 > /dev/null 2>&1'
 alias day='redshift -x && brightnessctl set 15% > /dev/null 2>&1'
 
+alias watts="watch -n 1 'upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -E \"energy-rate|percentage\"'"
+
 # Shortcut for refreshing .bashrc
 alias resource='source ~/.bashrc'
 
