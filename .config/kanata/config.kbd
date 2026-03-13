@@ -6,8 +6,8 @@
 (defsrc
 			 esc
        1 2 3 4 5 6 7 8 9 0 - =
-	     q w e r t y u i o p
-	caps a s d f g h j k l ;
+	     q w e r t y u i o p [ ]
+	caps a s d f g h j k l ; '
 			 z x c v b n m , . /
 			 alt ralt lmet rmet
 )
@@ -31,22 +31,33 @@
 	l3(layer-while-held third)
   t(layer-switch typing)
   n(layer-switch base)
+  ke(layer-switch keeb)
+  ;;y(layer-switch sowaru)
 )
 
 (deflayer (base)
 				@esc
         _ _ _ _ _ _ _ _ _ _ _ _
-				_ _ _ _ _ _ _ _ _ _
-	@caps @a @s @d @f _ _ @j @k @l @;
+				_ _ _ _ _ _ _ _ _ _ _ _
+	@caps @a @s @d @f _ _ @j @k @l @; _
 				_ _ _ _ _ _ _ _ _ _
 				lmet rmet @l3 @l2
+)
+
+(deflayer (keeb)
+				@esc
+        _ _ _ _ _ _ _ _ _ _ _ _
+				_ _ _ _ _ _ _ _ _ _ _ _
+	@caps @a @s @d @f _ _ @j @k @l @; _
+				_ _ _ _ _ _ _ _ _ _
+				@l3 @l2 _ _
 )
 
 (deflayer (noHRM)
 				@esc
         _ _ _ _ _ _ _ _ _ _ _ _
-				_ _ _ _ _ _ _ _ _ _
-	@caps _ _ _ _ _ _ _ _ _ _
+				_ _ _ _ _ _ _ _ _ _ _ _
+	@caps _ _ _ _ _ _ _ _ _ _ _
 				_ _ _ _ _ _ _ _ _ _
 				lmet rmet @l3 @l2
 )
@@ -54,8 +65,8 @@
 (deflayer (typing)
       @esc
       _ _ _ _ _ _ _ _ _ _ _ _
-      _ _ _ _ _ _ _ _ _ _
-@caps _ _ @td @tf _ _ _ @tk _ @t;
+      _ _ _ _ _ _ _ _ _ _ _ _ 
+@caps _ _ @td @tf _ _ _ @tk _ @t; _
       _ _ _ _ _ _ _ _ _ _
       lmet rmet @l3 @l2
 )
@@ -63,8 +74,8 @@
 (deflayer (second)
 				caps
         f1  f2    f3  f4  f5  f6 f7 f8 f9 f10 f11 f12
-				[   ]     S-[ S-] @t  _ +   -   _   _
-	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 =
+				[   ]     S-[ S-] @t  _ +   -   _   _ _ _
+	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 = _
 				S-` S-\	  `   S-8 _   @n _   _   _   \
 				lmet rmet _ _
 )
@@ -72,8 +83,17 @@
 (deflayer (third)
 			caps
       f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
-			1 2 3 4 5 6 7 8 9 0
-@caps S-6 S-2 S-4 S-5 _ left down up right _
-			_ 🔇 🔉 🔊 brdown brup _ _ _ _
+			1 2 3 4 5 6 7 8 9 0 _ _
+@caps S-6 S-2 S-4 S-5 _ left down up right _ _
+			_ 🔇 🔉 🔊 brdown brup @ke _ _ _
 			lmet rmet _ _
 )
+
+;;(deflayer sowaru  ;; Cyrillic base layer
+;;   _
+;;   _ _ _ _ _ _ _ _ _ _ _ _ 
+;;   Й Ц У К Е Н Г Ш Щ З Х Ъ    ;; top row: q w e r t y u i o p [ ]
+;; _ Ф Ы В А П Р О Л Д Ж Э     ;; home row: a s d f g h j k l ; '
+;;   Я Ч С М И Т Ь Б Ю .       ;; bottom: z x c v b n m , . /
+;;   _ _ _ _
+;;)
