@@ -99,9 +99,6 @@ local mymainmenu = awful.menu({
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- Manage Volume
-local current_volume_notif = nil
-
 -- {{{ Wibar
 -- Create a textclock widget
 local mytextclock = wibox.widget {
@@ -120,6 +117,12 @@ local volume_widget = wibox.widget {
 -- Update volume for widget text at startup
 local utils = require("utils")
 utils.update_volume(false, awful, volume_widget)
+
+-- Set volume to 0 at boot
+awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ 0%")
+
+-- Set brightness to 10 at boot
+awful.spawn("brightnessctl set 5%")
 
 local function take_screenshot(fullscreen)
   local screenshotDir = os.getenv("HOME") .. "/Pictures/Screenshots/"
