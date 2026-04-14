@@ -22,8 +22,8 @@
 	l( tap-hold 300 170 l ralt)
 	;( tap-hold 300 200 ; rmet)
 	tf( tap-hold 300 150 f lctrl)
-	td( tap-hold 300 150 d lshift)
-	tk( tap-hold 300 150 k rshift)
+	td( tap-hold 300 130 d lshift)
+	tk( tap-hold 300 130 k rshift)
 	t;( tap-hold 300 300 ; lmet)
 	caps(tap-hold 200 200 esc (caps-word 2000))
   esc(tap-hold 200 200 esc caps)
@@ -32,6 +32,11 @@
   t(layer-switch typing)
   n(layer-switch base)
   ke(layer-switch keeb)
+  kt(layer-switch keeb_typing)
+  kl2(layer-while-held keeb_second)
+  kl3(layer-while-held keeb_third)
+  no(layer-switch noHRM)
+  kno(layer-switch keeb_noHRM)
   ;;y(layer-switch sowaru)
 )
 
@@ -50,7 +55,7 @@
 				_ _ _ _ _ _ _ _ _ _ _ _
 	@caps @a @s @d @f _ _ @j @k @l @; _
 				_ _ _ _ _ _ _ _ _ _
-				@l3 @l2 _ _
+				@kl3 @kl2 _ _
 )
 
 (deflayer (noHRM)
@@ -62,6 +67,15 @@
 				lmet rmet @l3 @l2
 )
 
+(deflayer (keeb_noHRM)
+				@esc
+        _ _ _ _ _ _ _ _ _ _ _ _
+				_ _ _ _ _ _ _ _ _ _ _ _
+	@caps _ _ _ _ _ _ _ _ _ _ _
+				_ _ _ _ _ _ _ _ _ _
+				@kl3 @kl2 _ _
+)
+
 (deflayer (typing)
       @esc
       _ _ _ _ _ _ _ _ _ _ _ _
@@ -71,13 +85,31 @@
       lmet rmet @l3 @l2
 )
 
+(deflayer (keeb_typing)
+      @esc
+      _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ 
+@caps _ _ @td @tf _ _ _ @tk _ @t; _
+      _ _ _ _ _ _ _ _ _ _
+	  	@l3 @kl2 _ _
+)
+
 (deflayer (second)
 				caps
         f1  f2    f3  f4  f5  f6 f7 f8 f9 f10 f11 f12
-				[   ]     S-[ S-] @t  _ +   -   _   _ _ _
+				[   ]     S-[ S-] @t  @no +   -   _   _ _ _
 	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 = _
 				S-` S-\	  `   S-8 _   @n _   _   _   \
 				lmet rmet _ _
+)
+
+(deflayer (keeb_second)
+				caps
+        f1  f2    f3  f4  f5  f6 f7 f8 f9 f10 f11 f12
+				[   ]     S-[ S-] @kt  @kno +   -   _   _ _ _
+	@caps S-- S-apo S-9 S-0 apo _ S-3 S-1 S-7 = _
+				S-` S-\	  `   S-8 _   @ke _   _   _   \
+				_ _ _ _
 )
 
 (deflayer (third)
@@ -86,6 +118,15 @@
 			1 2 3 4 5 6 7 8 9 0 _ _
 @caps S-6 S-2 S-4 S-5 _ left down up right _ _
 			_ 🔇 🔉 🔊 brdown brup @ke _ _ _
+			lmet rmet _ _
+)
+
+(deflayer (keeb_third)
+			caps
+      f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+			1 2 3 4 5 6 7 8 9 0 _ _
+@caps S-6 S-2 S-4 S-5 _ left down up right _ _
+			_ 🔇 🔉 🔊 brdown brup @n _ _ _
 			lmet rmet _ _
 )
 
