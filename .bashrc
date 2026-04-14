@@ -26,16 +26,6 @@ alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # For restarting kanata daemon
 alias restart='sudo systemctl restart kanata'
 
-# Open my todo list
-alias todolist='nvim ~/todo.txt'
-
-# Switch to my projects
-alias cube='cd /mnt/shared/projects/new_cube_sim'
-alias cubed='cd /mnt/shared/projects/new_cube_sim/bin/debug'
-alias opengl='cd /mnt/shared/projects/learnopengl'
-alias opengld='cd /mnt/shared/projects/learnopengl/bin/debug'
-
-alias saidIt='~/projects/aidanCounter/aidan'
 alias equations='feh ~/Pictures/Screenshots/2025-09-16_17-11-03.png -Z -F'
 
 # Count the lines of code in a project
@@ -50,8 +40,5 @@ PS1='[\u@\h \W]\$ '
 
 # Add scrip folder to path
 export PATH="$HOME/.local/bin:$PATH"
-
-# Add todo to path
-export PATH="/mnt/shared/projects/todo/bin/debug:$PATH"
 
 export TERMINAL=alacritty
