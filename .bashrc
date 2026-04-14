@@ -45,3 +45,5 @@ PS1='[\u@\h \W]\$ '
 export PATH="$HOME/.local/bin:$PATH"
 
 export TERMINAL=alacritty
+
+export TZ=America/Toronto
