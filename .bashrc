@@ -36,6 +36,9 @@ alias makep='cmake -G Ninja -S . -B build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_C
 
 alias feh='feh -Z'
 
+alias connet='protonvpn connect'
+alias donnet='protonvpn disconnect'
+
 PS1='[\u@\h \W]\$ '
 
 # Add scrip folder to path
