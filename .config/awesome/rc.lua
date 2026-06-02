@@ -423,6 +423,39 @@ local globalkeys = gears.table.join(
     end)
   end,
     { description = "restart kanata remapper daemon", group = "system" }),
+  awful.key({ modkey, "Control" }, "c", function()
+    naughty.notify({
+      title = "Virtual Private Network",
+      text = "Connecting",
+      timeout = 2,
+    })
+    awful.spawn.easy_async_with_shell("protonvpn status |grep -q 'Connected'", function(stdout, stderr, reason, exit_code)
+      if exit_code == 0 then
+        awful.spawn.easy_async_with_shell("protonvpn connect", function(stdout, stderr, reason, exit_code)
+          if exit_code == 0 then
+            naughty.notify({
+              title = "Virtual Private Network",
+              text = "Connected successfully",
+              timeout = 2.5,
+            })
+          else
+            naughty.notify({
+              title = "Virtual Private Network",
+              text = "IDK bro it failed",
+              timeout = 5,
+            })
+          end
+        end
+      else
+        naughty.notify({
+          title = "Virtual Private Network",
+          text = "Already connected",
+          timeout = 2.5,
+        })
+      end
+    end)
+  end,
+    { description = "restart bluetooth daemon", group = "system" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
       take_screenshot(false)
