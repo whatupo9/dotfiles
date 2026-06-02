@@ -12,6 +12,10 @@ alias grep='grep --color=auto'
 
 alias off='shutdown now'
 
+alias resaudio='systemctl --user restart pipewire pipewire-pulse wireplumber'
+alias reskey='sudo systemctl restart kanata && echo "Restarting Kanata" && sleep 2'
+alias resblue='sudo systemctl restart bluetooth'
+
 alias night='redshift -O 1500 && brightnessctl set 1 > /dev/null 2>&1'
 alias day='redshift -x && brightnessctl set 15% > /dev/null 2>&1'
 
