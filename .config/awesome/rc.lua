@@ -373,7 +373,7 @@ local globalkeys = gears.table.join(
     { description = "open a terminal", group = "launcher" }),
   awful.key({ modkey, "Control" }, "r", awesome.restart,
     { description = "reload awesome", group = "awesome" }),
-  awful.key({ modkey, "Shift" }, "q", awesome.quit,
+  awful.key({ modkey, "Shift", "Control", altkey }, "q", awesome.quit,
     { description = "quit awesome", group = "awesome" }),
   awful.key({ modkey, altkey }, "l", function() awful.tag.incmwfact(0.05) end,
     { description = "increase master width factor", group = "layout" }),
@@ -422,7 +422,7 @@ local globalkeys = gears.table.join(
       end
     end)
   end,
-    { description = "restart bluetooth daemon", group = "system" }),
+    { description = "restart kanata remapper daemon", group = "system" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
       take_screenshot(false)
@@ -438,6 +438,18 @@ local globalkeys = gears.table.join(
       awful.util.spawn("brightnessctl set 5%-")
     end,
     { description = "brightness down", group = "media" }),
+  awful.key({modkey}, "v", function()
+    awful.spawn.with_shell([[
+      xclip -selection clipboard -t image/png -i "$(/home/cam/.local/bin/lastshot -n)"
+    ]])
+
+    naughty.notify({
+      title = "Screenshot pasted",
+      text = "Image copied and pasted",
+      timeout = 2.5,
+    })
+  end,
+    { description = "copy last screenshot to clipboard", group = "system"}),
   awful.key({}, "XF86MonBrightnessUp", function()
       awful.util.spawn("brightnessctl set 5%+")
     end,
@@ -770,3 +782,6 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+--Authenticate the polkit gui for gui sudo
+awful.spawn.with_shell("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
