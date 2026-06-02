@@ -427,16 +427,15 @@ local globalkeys = gears.table.join(
     naughty.notify({
       title = "Virtual Private Network",
       text = "Connecting",
-      timeout = 2,
     })
     awful.spawn.easy_async_with_shell("protonvpn status |grep -q 'Connected'", function(stdout, stderr, reason, exit_code)
-      if exit_code == 0 then
+      if exit_code == 1 then
         awful.spawn.easy_async_with_shell("protonvpn connect", function(stdout, stderr, reason, exit_code)
           if exit_code == 0 then
             naughty.notify({
               title = "Virtual Private Network",
               text = "Connected successfully",
-              timeout = 2.5,
+              timeout = 1.5,
             })
           else
             naughty.notify({
@@ -445,7 +444,7 @@ local globalkeys = gears.table.join(
               timeout = 5,
             })
           end
-        end
+        end)
       else
         naughty.notify({
           title = "Virtual Private Network",
@@ -455,7 +454,29 @@ local globalkeys = gears.table.join(
       end
     end)
   end,
-    { description = "restart bluetooth daemon", group = "system" }),
+    { description = "Connect VPN", group = "system" }),
+  awful.key({ modkey, "Control" }, "d", function()
+    naughty.notify({
+      title = "Virtual Private Network",
+      text = "Disconnecting",
+    })
+    awful.spawn.easy_async_with_shell("protonvpn disconnect", function(stdout, stderr, reason, exit_code)
+      if exit_code == 0 then
+        naughty.notify({
+          title = "Virtual Private Network",
+          text = "Disconnected successfully",
+          timeout = 1.5,
+        })
+      else
+        naughty.notify({
+          title = "Virtual Private Network",
+          text = "IDK bro it failed",
+          timeout = 5,
+        })
+      end
+    end)
+  end,
+    { description = "Disconnect VPN", group = "system" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
       take_screenshot(false)
