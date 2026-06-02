@@ -117,7 +117,7 @@
       f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
 			1 2 3 4 5 6 7 8 9 0 _ _
 @caps S-6 S-2 S-4 S-5 _ left down up right _ _
-			_ 🔇 🔉 🔊 brdown brup @ke _ _ _
+			_ 🔇 🔉 🔊 brdown brup @ke _ _ \
 			lmet rmet _ _
 )
 
@@ -126,7 +126,7 @@
       f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
 			1 2 3 4 5 6 7 8 9 0 _ _
 @caps S-6 S-2 S-4 S-5 _ left down up right _ _
-			_ 🔇 🔉 🔊 brdown brup @n _ _ _
+			_ 🔇 🔉 🔊 brdown brup @n _ _ \
 			lmet rmet _ _
 )
 
