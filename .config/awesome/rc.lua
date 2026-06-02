@@ -122,7 +122,7 @@ utils.update_volume(false, awful, volume_widget)
 awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ 0%")
 
 -- Set brightness to 10 at boot
-awful.spawn("brightnessctl set 5%")
+awful.spawn("brightnessctl set 25%")
 
 local function take_screenshot(fullscreen)
   local screenshotDir = os.getenv("HOME") .. "/Pictures/Screenshots/"
@@ -387,16 +387,52 @@ local globalkeys = gears.table.join(
     { description = "select next", group = "layout" }),
   awful.key({ modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
     { description = "select previous", group = "layout" }),
+  awful.key({ modkey, "Control" }, "b", function()
+    awful.spawn.easy_async_with_shell("pkexec systemctl restart bluetooth", function(stdout, stderr, reason, exit_code)
+      if exit_code == 0 then
+        naughty.notify({
+          title = "Bluetooth",
+          text = "Restarted successfully",
+          timeout = 2.5,
+        })
+      else
+        naughty.notify({
+          title = "Bluetooth",
+          text = "Restart failed",
+          timeout = 2.5,
+        })
+      end
+    end)
+  end,
+    { description = "restart bluetooth daemon", group = "system" }),
+  awful.key({ modkey, "Control" }, "k", function()
+    awful.spawn.easy_async_with_shell("pkexec systemctl restart kanata", function(stdout, stderr, reason, exit_code)
+      if exit_code == 0 then
+        naughty.notify({
+          title = "Kanata",
+          text = "Restarted successfully",
+          timeout = 2,
+        })
+      else
+        naughty.notify({
+          title = "Kanata",
+          text = "Restart failed",
+          timeout = 2,
+        })
+      end
+    end)
+  end,
+    { description = "restart bluetooth daemon", group = "system" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
       take_screenshot(false)
     end,
-    { description = "take selective screenshot", group = "layout" }),
+    { description = "take selective screenshot", group = "system" }),
   awful.key({ altkey, }, "s",
     function()
       take_screenshot(true)
     end,
-    { description = "take screenshot", group = "layout" }),
+    { description = "take screenshot", group = "system" }),
 
   awful.key({}, "XF86MonBrightnessDown", function()
       awful.util.spawn("brightnessctl set 5%-")
