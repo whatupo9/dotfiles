@@ -49,3 +49,17 @@ vim.keymap.set("v", "<leader>m", function()
     vim.cmd("noh");
   end)
 end)
+
+--compile commands for C++ projects
+vim.keymap.set("n", "<leader>cc",
+  ":!cmake --build build/debug<cr>",
+  { desc = "Build debug binary" })
+vim.keymap.set("n", "<leader>cr",
+  ":!cmake --build build/release<cr>",
+  { desc = "Build release binary" })
+vim.keymap.set("n", "<leader>ci",
+  ":!cmake --install build/release<cr>",
+  { desc = "Install release binary" })
+vim.keymap.set("n", "<leader>con",
+  ":!cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_INSTALL_PREFIX=\"$HOME/.local\" && cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_INSTALL_PREFIX=\"$HOME/.local\"<cr>",
+  { desc = "Reconfigure build files" })
