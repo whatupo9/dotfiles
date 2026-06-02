@@ -714,6 +714,11 @@ awful.rules.rules = {
     rule = { class = "Opera" },
     properties = { tag = "2" }
   },
+  -- For Lunar to open in the third tag
+  {
+    rule = { class = "Lunar Client" },
+    properties = { tag = "3" }
+  },
 }
 -- }}}
 
