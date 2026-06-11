@@ -52,4 +52,6 @@ export TERMINAL=alacritty
 
 export TZ=America/Toronto
 
+export PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
