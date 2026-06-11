@@ -51,3 +51,5 @@ export PATH="$HOME/.local/bin:$PATH"
 export TERMINAL=alacritty
 
 export TZ=America/Toronto
+
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local
