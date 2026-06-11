@@ -499,7 +499,7 @@ local globalkeys = gears.table.join(
 
     naughty.notify({
       title = "Screenshot pasted",
-      text = "Image copied and pasted",
+      text = "Image copied",
       timeout = 2.5,
     })
   end,
