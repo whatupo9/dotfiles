@@ -1,26 +1,13 @@
-[Added Associations]
-application/pdf=opera-2.desktop;
-application/vnd.oasis.opendocument.text=libreoffice.desktop;
-image/png=feh-3.desktop;feh-2.desktop;
-text/javascript=nvim-2.desktop;
-text/x-chdr=nvim-3.desktop;
-
 [Default Applications]
 application/pdf=zathura.desktop
 application/vnd.oasis.opendocument.text=libreoffice.desktop
-image/png=feh.desktop
 text/html=opera.desktop
-text/javascript=nvim.desktop
-text/x-chdr=nvim-3.desktop;
-x-scheme-handler/about=opera.desktop
 x-scheme-handler/http=opera.desktop
 x-scheme-handler/https=opera.desktop
 x-scheme-handler/mailto=opera.desktop
+x-scheme-handler/about=opera.desktop
 x-scheme-handler/unknown=opera.desktop
 inode/directory=org.kde.dolphin.desktop
-x-scheme-handler/lunarclient=lunarclient.desktop
-x-scheme-handler/discord-562286213059444737=lunarclient.desktop
-image/jpeg=feh.desktop
 video/mp4=mpv.desktop
 video/x-matroska=mpv.desktop
 video/webm=mpv.desktop
@@ -34,11 +21,15 @@ text/x-c=nvim.desktop
 text/x-c++=nvim.desktop
 text/x-c++src=nvim.desktop
 text/x-c++hdr=nvim.desktop
-application/javascript=nvim.desktop
 text/x-shellscript=nvim.desktop
-application/json=nvim.desktop
 text/xml=nvim.desktop
 text/css=nvim.desktop
+text/javascript=nvim.desktop
+text/x-chdr=nvim.desktop
+application/javascript=nvim.desktop
+application/json=nvim.desktop
+image/jpeg=feh.desktop
+image/png=feh.desktop
 image/webp=feh.desktop
 image/gif=feh.desktop
 image/bmp=feh.desktop
