@@ -793,6 +793,7 @@ client.connect_signal("manage", function(c)
   end
 end)
 
+
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
   -- buttons for the titlebar
@@ -806,6 +807,17 @@ client.connect_signal("request::titlebars", function(c)
       awful.mouse.client.resize(c)
     end)
   )
+
+  -- Create a minimal black text X button
+  local close_text_button = wibox.widget.textbox("✕")
+  close_text_button.font = "JetBrains Mono Bold 16"
+
+  -- Add mouse click behavior to close the window
+  close_text_button:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then
+      c:kill()
+    end
+  end)
 
   awful.titlebar(c):setup {
     { -- Left
@@ -826,12 +838,19 @@ client.connect_signal("request::titlebars", function(c)
       --awful.titlebar.widget.maximizedbutton(c),
       --awful.titlebar.widget.stickybutton(c),
       --awful.titlebar.widget.ontopbutton(c),
-      awful.titlebar.widget.closebutton(c),
+      {
+        close_text_button,
+        right=6,
+        bottom=3,
+        widget=wibox.container.margin,
+      },
+      --awful.titlebar.widget.closebutton(c),
       layout = wibox.layout.fixed.horizontal()
     },
     layout = wibox.layout.align.horizontal
   }
 end)
+
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
