@@ -247,10 +247,10 @@ awful.screen.connect_for_each_screen(function(s)
       mytextclock,
       battery_widget
       {
-        ac = "AC",
-        ac_prefix = " ⚡ ",
+        ac = "ADP1",
+        ac_prefix = " C-",
         adapter = "BAT0",
-        battery_prefix = " ",
+        battery_prefix = " B-",
         percent_colors = {
           { 10,  "red" },
           { 15,  "orange" },
@@ -261,7 +261,7 @@ awful.screen.connect_for_each_screen(function(s)
         timeout = 10,
         widget_text = "${AC_BAT}${color_on}${percent}%${color_off} ",
         widget_font = "JetBrains Mono 16",
-        tooltip_text = "Battery ${state}${time_est}\nCapacity: ${capacity_percent}%",
+        tooltip_text = "Battery ${state}${time_est}",
         alert_threshold = 10,
         alert_timeout = 0,
         alert_title = "Low battery !",
@@ -454,7 +454,7 @@ local globalkeys = gears.table.join(
       end
     end)
   end,
-    { description = "Connect VPN", group = "system" }),
+    { description = "connect VPN", group = "system" }),
   awful.key({ modkey, "Control" }, "d", function()
     naughty.notify({
       title = "Virtual Private Network",
@@ -476,7 +476,7 @@ local globalkeys = gears.table.join(
       end
     end)
   end,
-    { description = "Disconnect VPN", group = "system" }),
+    { description = "disconnect VPN", group = "system" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
       take_screenshot(false)
@@ -822,10 +822,10 @@ client.connect_signal("request::titlebars", function(c)
       layout  = wibox.layout.flex.horizontal
     },
     { -- Right
-      awful.titlebar.widget.floatingbutton(c),
-      awful.titlebar.widget.maximizedbutton(c),
-      awful.titlebar.widget.stickybutton(c),
-      awful.titlebar.widget.ontopbutton(c),
+      --awful.titlebar.widget.floatingbutton(c),
+      --awful.titlebar.widget.maximizedbutton(c),
+      --awful.titlebar.widget.stickybutton(c),
+      --awful.titlebar.widget.ontopbutton(c),
       awful.titlebar.widget.closebutton(c),
       layout = wibox.layout.fixed.horizontal()
     },
