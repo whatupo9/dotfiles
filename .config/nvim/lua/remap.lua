@@ -52,10 +52,10 @@ end)
 
 --compile commands for C++ projects
 vim.keymap.set("n", "<leader>cc",
-  ":!cmake --build build --preset debug<cr>",
+  ":!cmake --build --preset debug<cr>",
   { desc = "Build binary" })
 vim.keymap.set("n", "<leader>cr",
-  ":!cmake --build build --preset release<cr>",
+  ":!cmake --build --preset release<cr>",
   { desc = "Build release binary" })
 vim.keymap.set("n", "<leader>ci",
   ":!cmake --install build --config Release<cr>",
