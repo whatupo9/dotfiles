@@ -18,7 +18,7 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- Attempt to spawn programs (alacritty, opera)
+-- Attempt to spawn programs (alacritty)
 -- Only spawns if no process with same name is active
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
@@ -104,14 +104,14 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 local mytextclock = wibox.widget {
   format = "%H:%M  %a %d ",
   widget = wibox.widget.textclock,
-  font = "JetBrains Mono 16",
+  font = "JetBrains Mono 18",
   margin = { 8, 8, 4, 4 }
 }
 mytextclock = wibox.container.margin(mytextclock, 8, 8, 4, 4) -- padding
 
 local volume_widget = wibox.widget {
   widget = wibox.widget.textbox,
-  font = "JetBrains Mono 16"
+  font = "JetBrains Mono 18"
 }
 
 -- Update volume for widget text at startup
@@ -129,7 +129,7 @@ local function take_screenshot(fullscreen)
   awful.spawn.with_shell("mkdir -p " .. screenshotDir)
 
   local filename = os.date("%Y-%m-%d_%H-%M-%S") .. ".png"
-  local filepath = screenshotDir .. filename
+  local filepath = " -f " .. screenshotDir .. filename
 
   local command = "scrot -e 'xclip -selection clipboard -t image/png -i $f' "
   if not fullscreen then
@@ -247,7 +247,7 @@ awful.screen.connect_for_each_screen(function(s)
       mytextclock,
       battery_widget
       {
-        ac = "ADP1",
+        ac = "AC",
         ac_prefix = " C-",
         adapter = "BAT0",
         battery_prefix = " B-",
@@ -260,7 +260,7 @@ awful.screen.connect_for_each_screen(function(s)
         listen = true,
         timeout = 10,
         widget_text = "${AC_BAT}${color_on}${percent}%${color_off} ",
-        widget_font = "JetBrains Mono 16",
+        widget_font = "JetBrains Mono 18",
         tooltip_text = "Battery ${state}${time_est}",
         alert_threshold = 10,
         alert_timeout = 0,
@@ -299,6 +299,9 @@ end)
 
 -- {{{ Key bindings
 local globalkeys = gears.table.join(
+  awful.key({ modkey, "Shift" }, "o", function()
+    awful.client.movetoscreen()
+  end),
   awful.key({ modkey, }, "s", hotkeys_popup.show_help,
     { description = "show help", group = "awesome" }),
   awful.key({ modkey, }, "Escape", awful.tag.history.restore,
@@ -388,94 +391,95 @@ local globalkeys = gears.table.join(
   awful.key({ modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
     { description = "select previous", group = "layout" }),
   awful.key({ modkey, "Control" }, "b", function()
-    awful.spawn.easy_async_with_shell("pkexec systemctl restart bluetooth", function(stdout, stderr, reason, exit_code)
-      if exit_code == 0 then
-        naughty.notify({
-          title = "Bluetooth",
-          text = "Restarted successfully",
-          timeout = 2.5,
-        })
-      else
-        naughty.notify({
-          title = "Bluetooth",
-          text = "Restart failed",
-          timeout = 2.5,
-        })
-      end
-    end)
-  end,
+      awful.spawn.easy_async_with_shell("pkexec systemctl restart bluetooth", function(stdout, stderr, reason, exit_code)
+        if exit_code == 0 then
+          naughty.notify({
+            title = "Bluetooth",
+            text = "Restarted successfully",
+            timeout = 2.5,
+          })
+        else
+          naughty.notify({
+            title = "Bluetooth",
+            text = "Restart failed",
+            timeout = 2.5,
+          })
+        end
+      end)
+    end,
     { description = "restart bluetooth daemon", group = "system" }),
   awful.key({ modkey, "Control" }, "k", function()
-    awful.spawn.easy_async_with_shell("pkexec systemctl restart kanata", function(stdout, stderr, reason, exit_code)
-      if exit_code == 0 then
-        naughty.notify({
-          title = "Kanata",
-          text = "Restarted successfully",
-          timeout = 2,
-        })
-      else
-        naughty.notify({
-          title = "Kanata",
-          text = "Restart failed",
-          timeout = 2,
-        })
-      end
-    end)
-  end,
+      awful.spawn.easy_async_with_shell("pkexec systemctl restart kanata-daemon@$USER", function(stdout, stderr, reason, exit_code)
+        if exit_code == 0 then
+          naughty.notify({
+            title = "Kanata",
+            text = "Restarted successfully",
+            timeout = 2,
+          })
+        else
+          naughty.notify({
+            title = "Kanata",
+            text = "Restart failed",
+            timeout = 2,
+          })
+        end
+      end)
+    end,
     { description = "restart kanata remapper daemon", group = "system" }),
   awful.key({ modkey, "Control" }, "c", function()
-    naughty.notify({
-      title = "Virtual Private Network",
-      text = "Connecting",
-    })
-    awful.spawn.easy_async_with_shell("protonvpn status |grep -q 'Connected'", function(stdout, stderr, reason, exit_code)
-      if exit_code == 1 then
-        awful.spawn.easy_async_with_shell("protonvpn connect", function(stdout, stderr, reason, exit_code)
-          if exit_code == 0 then
-            naughty.notify({
-              title = "Virtual Private Network",
-              text = "Connected successfully",
-              timeout = 1.5,
-            })
+      naughty.notify({
+        title = "Virtual Private Network",
+        text = "Connecting",
+      })
+      awful.spawn.easy_async_with_shell("protonvpn status |grep -q 'Connected'",
+        function(stdout, stderr, reason, exit_code)
+          if exit_code == 1 then
+            awful.spawn.easy_async_with_shell("protonvpn connect", function(stdout, stderr, reason, exit_code)
+              if exit_code == 0 then
+                naughty.notify({
+                  title = "Virtual Private Network",
+                  text = "Connected successfully",
+                  timeout = 1.5,
+                })
+              else
+                naughty.notify({
+                  title = "Virtual Private Network",
+                  text = "IDK bro it failed",
+                  timeout = 5,
+                })
+              end
+            end)
           else
             naughty.notify({
               title = "Virtual Private Network",
-              text = "IDK bro it failed",
-              timeout = 5,
+              text = "Already connected",
+              timeout = 2.5,
             })
           end
         end)
-      else
-        naughty.notify({
-          title = "Virtual Private Network",
-          text = "Already connected",
-          timeout = 2.5,
-        })
-      end
-    end)
-  end,
+    end,
     { description = "connect VPN", group = "system" }),
   awful.key({ modkey, "Control" }, "d", function()
-    naughty.notify({
-      title = "Virtual Private Network",
-      text = "Disconnecting",
-    })
-    awful.spawn.easy_async_with_shell("protonvpn disconnect", function(stdout, stderr, reason, exit_code)
-      if exit_code == 0 then
-        naughty.notify({
-          title = "Virtual Private Network",
-          text = "Disconnected successfully",
-          timeout = 1.5,
-        })
-      else
-        naughty.notify({
-          title = "Virtual Private Network",
-          text = "IDK bro it failed",
-          timeout = 5,
-        })
-      end
-    end)
-  end,
+      naughty.notify({
+        title = "Virtual Private Network",
+        text = "Disconnecting",
+      })
+      awful.spawn.easy_async_with_shell("protonvpn disconnect", function(stdout, stderr, reason, exit_code)
+        if exit_code == 0 then
+          naughty.notify({
+            title = "Virtual Private Network",
+            text = "Disconnected successfully",
+            timeout = 1.5,
+          })
+        else
+          naughty.notify({
+            title = "Virtual Private Network",
+            text = "IDK bro it failed",
+            timeout = 5,
+          })
+        end
+      end)
+    end,
     { description = "disconnect VPN", group = "system" }),
   awful.key({ modkey, "Shift" }, "s",
     function()
@@ -492,18 +496,18 @@ local globalkeys = gears.table.join(
       awful.util.spawn("brightnessctl set 5%-")
     end,
     { description = "brightness down", group = "media" }),
-  awful.key({modkey}, "v", function()
-    awful.spawn.with_shell([[
+  awful.key({ modkey }, "v", function()
+      awful.spawn.with_shell([[
       xclip -selection clipboard -t image/png -i "$(/home/cam/.local/bin/lastshot -n)"
     ]])
 
-    naughty.notify({
-      title = "Screenshot pasted",
-      text = "Image copied",
-      timeout = 2.5,
-    })
-  end,
-    { description = "copy last screenshot to clipboard", group = "system"}),
+      naughty.notify({
+        title = "Screenshot pasted",
+        text = "Image copied",
+        timeout = 2.5,
+      })
+    end,
+    { description = "copy last screenshot to clipboard", group = "system" }),
   awful.key({}, "XF86MonBrightnessUp", function()
       awful.util.spawn("brightnessctl set 5%+")
     end,
@@ -840,9 +844,9 @@ client.connect_signal("request::titlebars", function(c)
       --awful.titlebar.widget.ontopbutton(c),
       {
         close_text_button,
-        right=6,
-        bottom=3,
-        widget=wibox.container.margin,
+        right = 6,
+        bottom = 3,
+        widget = wibox.container.margin,
       },
       --awful.titlebar.widget.closebutton(c),
       layout = wibox.layout.fixed.horizontal()
@@ -863,3 +867,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 --Authenticate the polkit gui for gui sudo
 awful.spawn.with_shell("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
+
+--Spawn picom as a background process
+awful.spawn.with_shell("picom -b")

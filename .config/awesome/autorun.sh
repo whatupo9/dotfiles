@@ -7,6 +7,5 @@ run() {
     fi
 }
 
-# Launch only Alacritty, Discord, and Opera at startup
+# Open alacritty
 run alacritty
-run opera
