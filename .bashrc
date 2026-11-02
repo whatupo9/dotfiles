@@ -12,10 +12,6 @@ alias grep='grep --color=auto'
 
 alias off='shutdown now'
 
-alias resaudio='systemctl --user restart pipewire pipewire-pulse wireplumber'
-alias reskey='sudo systemctl restart kanata && echo "Restarting Kanata" && sleep 2'
-alias resblue='sudo systemctl restart bluetooth'
-
 alias night='redshift -O 1500 && brightnessctl set 1 > /dev/null 2>&1'
 alias day='redshift -x && brightnessctl set 15% > /dev/null 2>&1'
 
@@ -27,31 +23,71 @@ alias resource='source ~/.bashrc'
 # Add alias for dotfiles bare repo
 alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-# For restarting kanata daemon
-alias restart='sudo systemctl restart kanata'
-
-alias equations='feh ~/Pictures/Screenshots/2025-09-16_17-11-03.png -Z -F'
-
 # Count the lines of code in a project
 alias loc='find src include -type f -exec cat {} + | wc -l'
 
-# Command to make project outside of nvim 
-alias makep='cmake -G Ninja -S . -B build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug && cmake --build build --config Debug'
-
 alias feh='feh -Z'
 
-alias connet='protonvpn connect'
-alias donnet='protonvpn disconnect'
+# Configure Terminal Prompt
+COLOR_RED="\[\e[1;31m\]"
+COLOR_YELLOW="\[\e[38;5;185m\]"
+COLOR_PURPLE="\[\e[38;5;133m\]"
+COLOR_BLUE="\[\e[38;5;38m\]"
+COLOR_RESET="\[\e[0m\]"
 
-PS1='[\u@\h \W]\$ '
+alias simple="SIMPLE=1"
+alias nosimple="SIMPLE=0"
 
-# Add scrip folder to path
+
+update_prompt() {
+  # Write a simple prompt if flag is set
+  if [[ "$SIMPLE" == "1" ]]; then
+      PS1="❱ "
+      return
+  fi
+
+  # Choose color based on user
+  if [ "$(id -un)" = "root" ]; then
+      USER_COLOR=$COLOR_RED
+      ARROW_COLOR=$COLOR_RED
+  elif [[ "$(id -un)" = "cam" || "$(id -un)" == "clmacgil" ]]; then
+      USER_COLOR=$COLOR_BLUE
+      ARROW_COLOR=$COLOR_RESET
+  else
+      USER_COLOR=$COLOR_YELLOW
+      ARROW_COLOR=$COLOR_RESET
+  fi
+
+  # Choose color based on hostname
+  if [ "$HOSTNAME" = "homelab" ]; then
+      HOST_COLOR=$COLOR_RED
+  elif [ "$HOSTNAME" = "anvil" ]; then
+      HOST_COLOR=$COLOR_BLUE
+  else
+      HOST_COLOR=$COLOR_YELLOW
+  fi
+
+  if [[ "$PWD" == "$HOME" || "$PWD" == "$HOME"/* ]]; then
+      PATH_COLOR=$COLOR_PURPLE
+  else
+      PATH_COLOR=$COLOR_RED
+  fi
+
+  PS1="${USER_COLOR}\u${COLOR_RESET}@${HOST_COLOR}\h ${PATH_COLOR}\w${ARROW_COLOR}\n❱${COLOR_RESET} "
+}
+
+PROMPT_COMMAND=update_prompt
+
+
+# Add binary folder to path
 export PATH="$HOME/.local/bin:$PATH"
+
+# Add script folder to path
+export PATH="$HOME/scripts:$PATH"
 
 export TERMINAL=alacritty
 
 export TZ=America/Toronto
 
-export PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
-
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+export PATH="$HOME/.elan/bin:$PATH"
