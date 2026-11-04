@@ -28,6 +28,11 @@ alias loc='find src include -type f -exec cat {} + | wc -l'
 
 alias feh='feh -Z'
 
+# Copy contents of a file to clipboard
+copy() {
+    cat "$@" | xclip -selection clipboard
+}
+
 # Configure Terminal Prompt
 COLOR_RED="\[\e[1;31m\]"
 COLOR_YELLOW="\[\e[38;5;185m\]"
@@ -37,7 +42,6 @@ COLOR_RESET="\[\e[0m\]"
 
 alias simple="SIMPLE=1"
 alias nosimple="SIMPLE=0"
-
 
 update_prompt() {
   # Write a simple prompt if flag is set
